@@ -26,7 +26,8 @@ COLOR_YELLOW='\e[93m'
 
 WORKDIR="$(pwd)"
 
-declare -A FORMAT_ARR=(["SKEL"]='_skel' ["USERS"]='_users' ["VALUES"]='_val')
+declare -a FORMAT_ARR=('_skel' '_users' '_val')
+#declare -A FORMAT_ARR=(["SKEL"]='_skel' ["USERS"]='_users' ["VALUES"]='_val')
 export PGPASSWORD="$POSTGRES_PASSWORD"
 
 ###############
