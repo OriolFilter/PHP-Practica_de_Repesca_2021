@@ -4,7 +4,7 @@ FROM postgres:13-alpine
 #ADD sources/db_default.sql /tmp/init_script.sql
 ADD sources /sources
 WORKDIR /sources
-RUN ln -s $(pwd)/build.sh /docker-entrypoint-initdb.d/init_02.sh
+RUN ln -s $(pwd)/build.sh /docker-entrypoint-initdb.d/init_01.sh
 #RUN pwd
 #RUN ./build.sh
 #ENTRYPOINT su postgres -c 'pg_ctl start -D /var/lib/postgresql/data -l serverlog'

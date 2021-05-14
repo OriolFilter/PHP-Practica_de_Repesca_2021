@@ -52,7 +52,7 @@ do
 
     # Formatting database:
     # Execute every file that can find using the keys in $FORMAT_ARR it it's own database
-    # Ej: ${WORKDIR}/${database}${key}.sql -> /sources/shop_skel.sql
+    # Ej: ${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql -> /sources/shop_skel.sql
 
     for key in "${!FORMAT_ARR[@]}"
     do
@@ -78,3 +78,7 @@ do
 done
 # Good Ending
 printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Finished postgresql initialitzation${COLOR_DEFAULT}\n"
+
+
+
+
