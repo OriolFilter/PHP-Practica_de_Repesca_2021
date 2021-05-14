@@ -32,11 +32,40 @@ class CodiCicle extends Field{
     }
 
     public function is_valid (){
-        return !$this->is_empty();
+        return !$this->is_empty() and is_int($this->value);
     }
 }
+
+class Image extends Field{
+//https://www.w3schools.com/php/php_file_upload.asp
+    /**
+     * @var mixed|null
+     */
+
+    function __construct()
+    {
+        $this->value=isset($_FILES["IMAGE"])?$_FILES["IMAGE"]:null;
+    }
+
+    public function is_valid (){
+         if ($this->is_empty()){
+             echo "emptpy";
+             return false;
+         }
+        $check = getimagesize($this->value);
+        if($check !== false) {
+            echo "File is an image - " . $check["mime"] . ".";
+            $uploadOk = 1;
+        } else {
+            echo "File is not an image.";
+            $uploadOk = 0;
+        }
+
+    }
+}
+
 class DNINumber extends Field{
-    public ?int $value=null;
+    public ?string $value=null;
     function __construct()
     {
         $this->value=isset($_REQUEST['DNI']) ?$_REQUEST['DNI']:null;
@@ -47,7 +76,6 @@ class DNINumber extends Field{
         return !$this->is_empty() and is_int($this->value);
     }
 }
-
 class DNILletra extends Field
 {
     public ?string $value=null;
@@ -87,6 +115,7 @@ class Fields{
     public Nom $Nom;
     public Cognom $Cognoms;
     public CodiCicle $CodiCicle;
+    public Image $Imatge;
 
     function __construct()
     {
@@ -94,23 +123,61 @@ class Fields{
         $this->Nom=new Nom();
         $this->Cognoms=new Cognom();
         $this->CodiCicle=new CodiCicle();
+        $this->Imatge=new Image();
     }
     function its_empty(){
-        if ($this->DNI->Number->is_empty() && $this->DNI->Lletra->is_empty() && $this->Cognoms->is_empty() && $this->CodiCicle->is_empty()){
-            return true;
-        } return false;
-
+        return ($this->DNI->Number->is_empty() && $this->DNI->Lletra->is_empty() && $this->Cognoms->is_empty() && $this->CodiCicle->is_empty() && $this->Imatge->is_empty())?true:false;
     }
 }
 
 class Bodyguard {
-    public $dbconn = @pg_connect("host='db' port=5432 dbname='institut' user=test password=test");
+    # Html manager
+    public $dbconn;
+    public bool $success = False;
+    public Fields $fields;
+    function __construct()
+    {
+        $this->dbconn=pg_connect("host='db' port=5432 dbname='institut' user=test password=test");
+
+    }
+    public function return_body(){
+        $this->fields=new Fields();
+//        echo $this->fields->CodiCicle->is_valid();
+        return ('
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <h1>Form ex1</h1>
+
+            <form action="/ofilterEx1.php" method="get" target="_blank">
+              <label for="NOM">Nom</label>
+              <input type="text" id="NOM" name="NOM"><br><br>
+              <label for="COGNOM">Cognom</label>
+              <input type="text" id="COGNOM" name="COGNOM"><br><br>
+              <label for="DNI">DNI</label>
+              <input type="text" id="DNI" name="DNI"><br><br>
+              <label for="LLETRA">Cognom</label>
+              <input type="text" id="LLETRA" name="LLETRA"><br><br>
+              <label for="CODICICLE">Image:</label>
+              <input type="file" name="CODICICLE" id="CODICICLE"><br><br>
+              <input type="submit" value="Submit">
+            </form>'.
+            ($this->success?'<p style="color: lawngreen">Succeed!</p>':'').
+            ($this->fields->its_empty()==false and $this->success==true?'<p style="color: red">Error!</p>':'').
+            '</body>
+            </html>');
+    }
 }
 
 # Main
-$f=new Fields();
-echo $f->its_empty();
-
+//$f=new Fields();
+//echo $f->its_empty();
+$page = new Bodyguard();
+echo $page->return_body();
+echo $page->fields->Imatge->is_valid();
+//echo $page->fields->Nom->is_empty()==true?112:023
+;
+//echo 2;
 
 
 ?>
