@@ -1,5 +1,15 @@
 <?php
 
+# Every field in form is a inherited class from 'Field'
+# Main differences between objects
+#   DNI consist contains 2 objects
+#         DNINumber
+#         DNILletra
+#     is_valid checks if the DNI is valid
+#   Email
+#     checks using regex and the native FILTER_VALIDATE_EMAIL function to check if the given email is valid
+
+# Base class
 class Field{
     public function is_empty():bool{
         return empty($this->value);
@@ -32,6 +42,7 @@ class Email extends Field{
     public ?string $value=null;
     public function is_valid (){
         $email = @filter_var($this->value, FILTER_VALIDATE_EMAIL);
+        # Uses regex to check the mail structure
         if ($email && preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
             return true;
         }
@@ -50,8 +61,6 @@ class CodiCicle extends Field{
     }
 
     public function is_valid (){
-//        echo "Aaaa";
-//        echo $this->;
         return !$this->is_empty() && is_int(intval($this->value));
     }
 }
@@ -127,6 +136,9 @@ class DNI
 }
 
 class Fields{
+
+    # Contains all the field-objects
+
     public DNI $DNI;
     public Nom $Nom;
     public Cognom $Cognoms;
@@ -144,14 +156,20 @@ class Fields{
         $this->Imatge=new Image();
     }
     function its_empty(){
+        # Checks the functions from the object and returns bool depending if it's empty or not
         return ($this->DNI->Number->is_empty() && $this->DNI->Lletra->is_empty() && $this->Cognoms->is_empty() && $this->CodiCicle->is_empty() && $this->Imatge->is_empty() && $this->Email->is_empty())?true:false;
     }
     function its_valid(){
+        # Checks the functions from the object and returns bool depending if all the values are valid
         return ($this->DNI->is_valid() && $this->Cognoms->is_valid() && $this->CodiCicle->is_valid() && $this->Imatge->is_valid() && $this->Email->is_valid())?true:false;
     }
 }
 class Bodyguard {
     # Html manager
+
+    # Uses $status_code to know the actual status and pick the correct behaviour
+    # $fields stores the object $Fields, which contains all the users with the data given from the user
+
     public $dbconn;
     public string $status_code = '2'; # 0 Success , 1 Error fields, 2 Empty fields, 3 unknown error, -1 fields check and going to insert in database
     public Fields $fields;
@@ -162,6 +180,9 @@ class Bodyguard {
         $this->check_fields();
         $store_img_dir='/var/www/html/img';
         $public_img_dir="/img";
+
+        # If all the data is valid will try to insert the values inside the database
+
         if ($this->status_code=='-1') {
             # Move image
 
@@ -182,6 +203,7 @@ class Bodyguard {
         }
     }
     public function check_fields(){
+        # Updates status from the object
         if ($this->fields->its_empty()) {
             $this->status_code='2';
         } elseif ($this->fields->its_valid()) {
@@ -191,6 +213,9 @@ class Bodyguard {
         }
     }
     public function return_body(){
+
+        # Get codi_cursos/abreviacio from the database
+
         $cursos_array = [];
         $result = pg_prepare($this->dbconn, "sel_cursos_q", 'select codicicle, abreviatura from cursos;');
         ;$res=pg_get_result($this->dbconn);
@@ -208,6 +233,8 @@ class Bodyguard {
         foreach ($cursos_array as $key=>$value) {
             $codicicle_options .= "<option value='${key}'>${cursos_array[$key]}</option>";
         }
+
+        # Format HTML page
 
         return ('
             <!DOCTYPE html>
@@ -262,5 +289,6 @@ class Bodyguard {
 
 # Main
 $page = new Bodyguard();
+# Prints HTML page
 echo $page->return_body();
 ?>

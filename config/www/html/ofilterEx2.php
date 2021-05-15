@@ -34,6 +34,7 @@ echo "<table style='width:100%'>
     <th>Foto</th>
 </tr>";
 
+# Generates table content
 while ($row = pg_fetch_row($result)) {
     echo "<tr>";
     echo "<td><p>${row[0]}</p></td>";
@@ -50,13 +51,4 @@ echo "</table>";
 
 
 echo '</body></html>';
-
-//$codicicle = pg_fetch_all_columns($res,0); //codicicle
-//$abreviatura = pg_fetch_all_columns($res,1); //abreviatura
-//;$pg_result = pg_get_result($dbconn);
-//foreach ($codicicle as $key=>$value) {
-//    $select_array[$codicicle[$key]] = $abreviatura[$key];
-//}
-//echo
-//echo explode($select_array)
 ?>
