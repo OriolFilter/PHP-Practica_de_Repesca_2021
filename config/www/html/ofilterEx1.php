@@ -35,7 +35,7 @@ class Email extends Field{
         if ($email && preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
             return true;
         }
-        return false
+        return false;
     }
     function __construct()
     {
