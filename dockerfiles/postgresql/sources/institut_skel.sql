@@ -27,7 +27,6 @@ CREATE TABLE if not exists alumnes (
         check ( length(CodiCicle::text) = 1 ),
     constraint codi_cicle FOREIGN KEY (CodiCicle) REFERENCES cursos (CodiCicle) ON DELETE CASCADE
 );
-
 -- Per fer el autoincrement en postgres s'ha de crear una sequencia, pero no tenia gaire sentit crear la sequencia,
 -- iniciar els valors, assignar 3 entrades i despres alterar la taula per a que l'index sigui +4, aixi que he fet les
 -- comandes per la sequencencia i els he deixat comentats.

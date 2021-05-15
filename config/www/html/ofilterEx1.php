@@ -35,6 +35,7 @@ class Email extends Field{
         if ($email && preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
             return true;
         }
+        return false
     }
     function __construct()
     {
@@ -159,18 +160,20 @@ class Bodyguard {
         $this->fields=new Fields();
         $this->dbconn=pg_connect("host='db' port=5432 dbname='institut' user=test password=test");
         $this->check_fields();
-        $img_dir='/tmp/img';
+        $store_img_dir='/var/www/html/img';
+        $public_img_dir="/img";
         if ($this->status_code=='-1') {
             # Move image
 
-            $img_future_path="${img_dir}/".basename($this->fields->Imatge->value['tmp_name']).'.png';
-            copy($this->fields->Imatge->value['tmp_name'],$img_future_path);
+            $img_store_path="${store_img_dir}/".basename($this->fields->Imatge->value['tmp_name']).'.png';
+            $img_public_path="${public_img_dir}/".basename($this->fields->Imatge->value['tmp_name']).'.png';
+            copy($this->fields->Imatge->value['tmp_name'],$img_store_path);
             ;$result = pg_prepare($this->dbconn, "add_alumne", 'insert into alumnes (DNI, LLETRA, NOM, COGNOMS, MAIL, CODICICLE, FOTO) values ($1,$2,$3,$4,$5,$6,$7)');
             ;$res=pg_get_result($this->dbconn);
-            ;$result = pg_send_execute($this->dbconn, "add_alumne",array($this->fields->DNI->Number->value,$this->fields->DNI->Lletra->value,$this->fields->Nom->value,$this->fields->Cognoms->value,$this->fields->Email->value,$this->fields->CodiCicle->value,$img_future_path));
+            ;$result = pg_send_execute($this->dbconn, "add_alumne",array($this->fields->DNI->Number->value,$this->fields->DNI->Lletra->value,$this->fields->Nom->value,$this->fields->Cognoms->value,$this->fields->Email->value,$this->fields->CodiCicle->value,$img_public_path));
             ;$err=pg_last_notice($this->dbconn);
-            ;$pg_result = pg_get_result($this->dbconn);
-            if ($err) {$this->status_code='3';
+            ;$res = pg_get_result($this->dbconn);
+            if ($err or !$res) {$this->status_code='3';
             }
             else{
                 $this->status_code='0';

@@ -10,7 +10,7 @@ services:
       - ./config/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./config/www/:/var/www:ro
       - ./config/cert_ssl:/shared/ssl
-      - ./config/imgs:/tmp/img:ro
+#      - ./config/imgs:/tmp/img:ro
     links:
       - php
     networks:
@@ -25,7 +25,7 @@ services:
       #          - ./config/filterweb/:/code
       #          - ./config/php/php.ini:/usr/local/etc/php/php.ini
       - ./config/www/:/var/www:ro
-      - ./config/imgs:/tmp/img:rw
+#      - ./config/imgs:/tmp/img:rw
     links:
       - db
     networks:
