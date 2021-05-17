@@ -125,13 +125,11 @@ class DNI
         $this->Number=new DNINumber();
     }
     public function is_valid():bool{
-        $valid='';
         if (substr("TRWAGMYFPDXBNJZSQVHLCKE", intval($this->Number->value)%23, 1) == $this->Lletra->value && strlen($this->Lletra->value) == 1 && strlen ($this->Number->value) == 8 ){
-            $valid=true;
+            return true;
         }else{
-            $valid=false;
+            return false;
         }
-        return $valid;
     }
 }
 
